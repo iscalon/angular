@@ -1,0 +1,21 @@
+<div>
+    <table class="quotations">
+        <thead>
+            <tr>
+                <th colspan="2">Quotations</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="loading">
+                Loading please wait...
+            </tr>
+            <tr *ngFor="let quotation of quotations$ | async">
+                <td>1€ = {{ quotation.value }} {{ quotation.name }}</td>
+                <td><input type="button" (click)="followQuotation(quotation)" value="Follow"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <router-outlet></router-outlet>
+</div>

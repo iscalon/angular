@@ -1,0 +1,28 @@
+<ng-container *ngIf="loading; then wait; else quotation">
+</ng-container>
+
+<ng-template #wait>
+    <div>
+        Loading, please wait...
+    </div>
+</ng-template>
+<ng-template #quotation>
+    <h2>Followed quotation :</h2>
+    <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+        <div>
+            <input type="text" formControlName="name" [readOnly]="true"> : <input formControlName="value" type="number" [readOnly]="true">
+        </div>
+        <div>
+            <input formControlName="quantity" type="number" placeholder="Quantity">
+            <input type="submit" value="Buy !" [disabled]="!canSubmit()">
+        </div>
+        <div *ngIf="!canSubmit()" class="error">
+            Problems with quantity :
+            <ul>
+                <li *ngFor="let error of getQuantityErrors()">
+                    {{error}}
+                </li>
+            </ul>
+        </div>
+    </form>
+</ng-template>
