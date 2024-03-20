@@ -1,0 +1,9 @@
+.search {
+    min-width: 15em;
+}
+
+.display {
+    margin-left: 10%;
+    margin-right: auto;
+    max-width: 60em;
+}

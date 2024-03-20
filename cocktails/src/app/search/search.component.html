@@ -1,0 +1,23 @@
+<h2>Add ingredient :</h2>
+<button type="button" mat-mini-fab (click)="addIngredient()">
+    <mat-icon>add</mat-icon>
+</button>
+
+<form [formGroup]="form" (submit)="search()" ngNativeValidate style="margin-top: 5%;">
+    <fieldset>
+        <legend>Ingredients</legend>
+        <ng-container formArrayName="ingredients">
+            <ng-container *ngFor="let ingredientForm of ingredients.controls; index as i">
+                <div class="ingredient" [formGroupName]="i">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Name</mat-label>
+                        <input matInput formControlName="name" placeholder="ex: Lemon" style="color: black;" required>
+                    </mat-form-field>
+                    <mat-icon color="warn" class="delete-btn" (click)="deleteIngredient(i)">delete_forever</mat-icon>
+                </div>
+            </ng-container>
+        </ng-container>
+    </fieldset>
+    <br />
+    <button mat-raised-button color="accent" type="submit">Search</button>
+</form>

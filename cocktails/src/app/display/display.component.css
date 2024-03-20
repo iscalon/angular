@@ -1,0 +1,32 @@
+.instructions {
+    color: wheat;
+}
+
+.cocktail {
+    color: whitesmoke;
+}
+
+.cocktail-card {
+    background: linear-gradient(to right, rgba(164, 1, 99, 0.584), rgba(105, 0, 162, 0.795));
+}
+
+.cocktails {
+    padding: 1em;
+}
+
+.ingredient {
+    padding: 1em;
+}
+
+.mdc-card__actions {
+    gap: 0.5em;
+}
+
+.loading {
+    margin-top: 1em;
+}
+
+img {
+    margin-left: 1em;
+    border-radius: 5%;
+}

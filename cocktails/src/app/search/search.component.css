@@ -1,0 +1,6 @@
+fieldset {
+    border: 0.1em solid;
+    border-color: rgb(147, 147, 147);
+    border-radius: 6px;
+    box-shadow: 10px 10px 5px #aaaaaa;
+}

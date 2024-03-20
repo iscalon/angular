@@ -1,0 +1,30 @@
+<ng-container *ngIf="isLoading(); then wait; else cocktails">
+</ng-container>
+
+<ng-template #wait>
+    <mat-progress-spinner
+        class="loading"
+        color="primary"
+        mode="indeterminate">
+    </mat-progress-spinner>
+</ng-template>
+<ng-template #cocktails>
+    <div class="cocktails" *ngFor="let cocktail of getCocktails$() | async">
+        <mat-card [appearance]="'raised'" class="cocktail-card">
+          <mat-card-header>
+            <mat-card-title class="cocktail">{{ cocktail.name }}</mat-card-title>
+          </mat-card-header>
+          <img mat-card-xl-image src="{{ cocktail.thumbUrl }}" alt="Photo of {{ cocktail.name }}">
+          <mat-card-content>
+            <p class="instructions">
+              {{ cocktail.instructions }}
+            </p>
+          </mat-card-content>
+          <mat-card-actions>
+            <ng-container *ngFor="let ingredient of cocktail.ingredients; index as i">
+              <button class="ingredient" mat-raised-button color="accent">{{ ingredient }} : {{ cocktail.quantities[i] ?? 'as needed' }}</button>
+            </ng-container>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+</ng-template>
