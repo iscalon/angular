@@ -1,0 +1,51 @@
+<form [formGroup]="form" (submit)="onSubmit()" ngNativeValidate>
+    <div class="container">
+        <mat-accordion class="headers">
+            <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Tasks completion time expectations
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        Type your task completion time probabilities
+                        <mat-icon color="primary">new_releases</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <ng-container formArrayName="tasks">
+                    <ng-container *ngFor="let taskForm of tasks.controls; index as i">
+                        <ng-container [formGroupName]="i">
+                            <mat-form-field class="task-name">
+                                <mat-label>Task name</mat-label>
+                                <input formControlName="taskName" matInput>
+                            </mat-form-field>
+
+                            <mat-form-field class="task-best">
+                                <mat-label>Best (5%)</mat-label>
+                                <input formControlName="bestTime" matInput type="number" min="0.5" step="0.5" required>
+                            </mat-form-field>
+
+                            <mat-form-field class="task-average">
+                                <mat-label>Average (50%)</mat-label>
+                                <input formControlName="averageTime" matInput type="number" min="0.5" step="0.5" required>
+                            </mat-form-field>
+
+                            <mat-form-field class="task-worst">
+                                <mat-label>Worst (95%)</mat-label>
+                                <input formControlName="worstTime" matInput type="number" min="0.5" step="0.5" required>
+                            </mat-form-field>
+                            <mat-icon color="warn" class="delete-btn" (click)="deleteTask(i)">delete_forever</mat-icon>
+                        </ng-container>
+                        <mat-divider></mat-divider>
+                    </ng-container>
+                </ng-container>
+
+                <button type="button" (click)="addTask()" class="bt-add-task" mat-raised-button color="accent">Add task</button>
+            
+            </mat-expansion-panel>
+        </mat-accordion>
+
+        <button [disabled]="!canSubmit()" type="submit" class="bt-compute" mat-raised-button color="primary">Compute expectations</button>
+
+    </div>
+</form>

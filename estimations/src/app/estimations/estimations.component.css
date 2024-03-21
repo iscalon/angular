@@ -1,0 +1,28 @@
+.headers .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
+::ng-deep .mat-expansion-panel-body {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.5em;
+}
+
+.bt-compute {
+    margin-left: auto;
+    margin-top: 1vh;
+}
+
+.bt-add-task {
+    margin-right: auto;
+}
+
+.bt-delete-task {
+    margin-right: auto;
+}
+
+.mat-divider {
+    flex-basis: 100%;
+    padding: 1em;
+}

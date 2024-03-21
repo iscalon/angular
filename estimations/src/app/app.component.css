@@ -1,0 +1,26 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 85vw;
+    row-gap: 5vh;
+}
+
+.header {
+    align-self: center;
+}
+
+fieldset {
+    border: 0.1em solid;
+    border-radius: 6px;
+    box-shadow: 1vw 1vh 1vb #aaaaaa;
+    background: white;
+}
+
+.title {
+    background: -webkit-linear-gradient(0deg, #ff31ab 0%, rgba(255,53,252,1) 46%, #5100ff 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

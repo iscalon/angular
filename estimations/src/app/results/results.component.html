@@ -1,0 +1,64 @@
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let expectation"> {{expectation.taskName}} </td>
+        <td mat-footer-cell *matFooterCellDef> Total </td>
+    </ng-container>
+
+    <!-- Mu Column -->
+    <ng-container matColumnDef="mu">
+        <th mat-header-cell *matHeaderCellDef> Completion time expectation </th>
+        <td mat-cell *matCellDef="let expectation"> {{expectation.completionTime | number: '1.2-2'}} </td>
+        <td mat-footer-cell *matFooterCellDef> {{getMuTotal$() | async | number: '1.2-2'}} </td>
+    </ng-container>
+
+    <!-- Sigma Column -->
+    <ng-container matColumnDef="sigma">
+        <th mat-header-cell *matHeaderCellDef> Standard deviation </th>
+        <td mat-cell *matCellDef="let expectation"> {{expectation.standardDeviation | number: '1.2-2'}} </td>
+        <td mat-footer-cell *matFooterCellDef> {{getSigmaTotal$() | async | number: '1.2-2'}} </td>
+    </ng-container>
+
+    <!-- Expand Column -->
+    <ng-container matColumnDef="expand">
+        <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-icon-button aria-label="expand row"
+                (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                @if (expandedElement === element) {
+                <mat-icon color="accent">keyboard_arrow_up</mat-icon>
+                } @else {
+                <mat-icon color="primary">keyboard_arrow_down</mat-icon>
+                }
+            </button>
+        </td>
+    </ng-container>
+    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+    <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+            <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                <div class="example-element-description">
+                    <span class="example-element-description-attribution">BEST : </span>{{ element.task?.bestTime }}&nbsp;
+                    <span class="example-element-description-attribution">AVERAGE : </span>{{ element.task?.averageTime }}&nbsp;
+                    <span class="example-element-description-attribution">WORST : </span>{{ element.task?.worstTime }}
+                </div>
+            </div>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplayWithExpand;" class="example-element-row"
+        [class.example-expanded-row]="expandedElement === row"
+        (click)="expandedElement = expandedElement === row ? null : row"
+        #tooltip="matTooltip"
+        [matTooltip]="getTooltip(row)"
+        [matTooltipPosition]="'below'"
+        matTooltipHideDelay="1000"
+        matTooltipShowDelay="300"
+        ></tr>
+    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    <tr mat-footer-row *matFooterRowDef="columnsToDisplay"></tr>
+</table>
+<button type="button" class="bt-back" mat-raised-button color="primary" (click)="goBack()">Go back</button>
