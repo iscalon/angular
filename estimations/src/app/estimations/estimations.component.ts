@@ -12,21 +12,21 @@ import { TaskCompletionProbabilities } from '../model/task-completion-probabilit
 import { MediatorService } from '../services/mediator.service';
 
 @Component({
-  selector: 'app-estimations',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatExpansionModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDividerModule],
-  templateUrl: './estimations.component.html',
-  styleUrl: './estimations.component.css'
+    selector: 'app-estimations',
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatExpansionModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDividerModule
+    ],
+    templateUrl: './estimations.component.html',
+    styleUrl: './estimations.component.css'
 })
 export class EstimationsComponent implements AfterViewInit {
 
