@@ -9,6 +9,9 @@ import { Observable, map } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip'; 
 import { Router, RouterModule } from '@angular/router';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'app-results',
@@ -18,7 +21,11 @@ import { Router, RouterModule } from '@angular/router';
         MatButtonModule,
         MatTooltipModule,
         RouterModule,
-        CommonModule
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule
     ],
     templateUrl: './results.component.html',
     animations: [
@@ -32,13 +39,21 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class ResultsComponent implements OnInit {
 
-  readonly columnsToDisplay = ['name', 'mu', 'sigma'];
+  readonly defaultActorsCount = 1;
+  readonly defaultParallelisationPercentage = 100;
+  readonly columnsToDisplay = ['name', 'mu', 'muAdjusted', 'sigma', 'sigmaAdjusted'];
   readonly columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
   readonly dataSource = new MatTableDataSource<Expectation>();
   expandedElement?: Expectation;
 
+  form = this.formBuilder.group({
+    actorsCount: this.defaultActorsCount,
+    parallelisationPercentage: this.defaultParallelisationPercentage
+  });
+  
   constructor(
     private readonly mediator: MediatorService,
+    private readonly formBuilder: FormBuilder,
     private readonly router: Router) { }
 
   ngOnInit(): void {
@@ -82,5 +97,36 @@ export class ResultsComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['']);
+  }
+
+  computeAdjustedCompletionTime(expectation?: Expectation): number | undefined {
+    if(!expectation) {
+      return undefined;
+    }
+    return this.computeBrooksAmdahlMetcalfeTime(expectation.completionTime);
+  }
+
+  computeAdjustedStandardDeviationTime(expectation?: Expectation): number | undefined {
+    if(!expectation) {
+      return undefined;
+    }
+    return this.computeBrooksAmdahlMetcalfeTime(expectation.standardDeviation);
+  }
+
+  computeBrooksAmdahlMetcalfeTime(time?: number | null): number | undefined {
+    if(!time) {
+      return undefined;
+    }
+    const p = this.getParallelisationPercentage() / 100.0;
+    const n = this.getActorsCount();
+    return time*((1-p)+p/n)*(1+0.05* Math.pow(n-1, 1.5));
+  }
+  
+  private getActorsCount(): number {
+    return this.form.value.actorsCount ?? this.defaultActorsCount;
+  }
+
+  private getParallelisationPercentage(): number {
+    return this.form.value.parallelisationPercentage ?? this.defaultParallelisationPercentage;
   }
 }
