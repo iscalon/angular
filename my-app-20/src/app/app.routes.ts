@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
 import { EmployeeService } from './services/employee-service';
+import { authGuard } from './shared/guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -17,6 +18,7 @@ export const routes: Routes = [
       const module = await import('./pages/employees/employees.routes');
       return module.routes;
     },
-    providers: [EmployeeService]
+    providers: [EmployeeService],
+    canActivate: [/*authGuard*/]
   },
 ];
