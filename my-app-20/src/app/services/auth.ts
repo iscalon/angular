@@ -25,6 +25,10 @@ export class Auth {
   getAuthenticationToken(): string {
     return 'xxxx-token-yyyyyyy-zzzzzz';
   }
+
+  hasPermission(permission: string): boolean {
+    return 'ListEmployees' === permission;
+  }
 }
 
 export function isAuthenticated$(): Observable<boolean> {
