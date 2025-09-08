@@ -23,7 +23,7 @@ export class Auth {
   }
 }
 
-export function isAuthenticated() {
+export function isAuthenticated$() {
   const authService = inject(Auth);
   return authService.isAuthenticated$.asObservable();
 }

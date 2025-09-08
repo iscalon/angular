@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { isAuthenticated } from '../../../services/auth';
+import { isAuthenticated$ } from '../../../services/auth';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -27,6 +27,6 @@ import { CommonModule } from '@angular/common';
 })
 export class Footer {
 
-  isAuthenticated$ = isAuthenticated();
+  isAuthenticated$ = isAuthenticated$();
 
 }
