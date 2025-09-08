@@ -3,7 +3,7 @@ import { EmployeeList } from './employee-list/employee-list';
 import { EditEmployee } from './edit-employee/edit-employee';
 import { CreateEmployee } from './create-employee/create-employee';
 import { EmployeeDetails } from './employee-details/employee-details';
-import { employeeDetailsResolver } from '../../shared/repositories/employee-details.resolver';
+import { employeeDetailsResolver } from '../../shared/resolvers/employee-details.resolver';
 
 export const routes: Routes = [
   { path: 'list', component: EmployeeList },
