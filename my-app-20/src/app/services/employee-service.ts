@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { concatMap, filter, first, from, Observable, of } from 'rxjs';
+import { concatMap, EMPTY, filter, first, from, Observable, of } from 'rxjs';
 import { Employee } from '../infrastructure/types/employee';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class EmployeeService {
    */
   getEmployee(id: number): Observable<Employee> {
     if(id < 0) {
-      return of();
+      return EMPTY;
     }
     return this.getEmployees().pipe(
       concatMap(from),

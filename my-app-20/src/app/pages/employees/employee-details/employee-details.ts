@@ -4,10 +4,11 @@ import { map, Observable } from 'rxjs';
 import { Employee } from '../../../infrastructure/types/employee';
 import { CommonModule } from '@angular/common';
 import { TruncateDirective } from "../../../shared/directives/truncate.directive";
+import { FileUpload } from "../../../shared/components/file-upload/file-upload";
 
 @Component({
   selector: 'app-employee-details',
-  imports: [CommonModule, TruncateDirective],
+  imports: [CommonModule, TruncateDirective, FileUpload],
   template: `
     <h2>Employee Details</h2>
     @if(employee$ | async; as employee) {
@@ -22,6 +23,7 @@ import { TruncateDirective } from "../../../shared/directives/truncate.directive
           <td>Position: </td><td appTruncate>{{ employee.position }}</td>
         </tr>  
     </table>
+    <app-file-upload label="Upload profile picture" accept="image/jpeg,image/png" />
     }
   `,
   styles: ``,

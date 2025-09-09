@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
 import { EmployeeService } from './services/employee-service';
 import { hasPermission } from './shared/guards/auth.guard';
+import { ProjectService } from './services/project-service';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -20,5 +21,13 @@ export const routes: Routes = [
     },
     providers: [EmployeeService],
     canActivate: [hasPermission('ListEmployees')]
+  },
+  {
+    path: 'work',
+    loadChildren: async () => {
+      const module = await import('./pages/work/work.routes');
+      return module.routes;
+    },
+    providers: [ProjectService]
   },
 ];
