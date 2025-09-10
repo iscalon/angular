@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable, of } from 'rxjs';
+import { delay, EMPTY, Observable, of } from 'rxjs';
 import { Project } from '../infrastructure/types/project';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class ProjectService {
     if(!project) {
       return EMPTY;
     }
-    return of(project);
+    return of(project).pipe(delay(500));
   }
 
   getProjects$(): Observable<Project[]> {

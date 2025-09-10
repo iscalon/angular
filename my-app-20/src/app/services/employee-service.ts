@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { concatMap, EMPTY, filter, first, from, Observable, of } from 'rxjs';
+import { concatMap, delay, EMPTY, filter, first, from, Observable, of, tap } from 'rxjs';
 import { Employee } from '../infrastructure/types/employee';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class EmployeeService {
    * @returns
    */
   getEmployees(): Observable<Employee[]> {
-    return of([
+    return of<Employee[]>([
       {
         id: 0,
         firstName: 'John',
@@ -28,7 +28,16 @@ export class EmployeeService {
         level: 'Senior',
         isAvailable: true,
       },
-    ]);
+      {
+        id: 2,
+        firstName: 'Jimmy',
+        lastName: 'DNEGEL',
+        email: 'jimmy.dnegel@example.org',
+        position: 'Designer',
+        level: 'Junior',
+        isAvailable: false,
+      },
+    ]).pipe(delay(1500));
   }
 
   /**

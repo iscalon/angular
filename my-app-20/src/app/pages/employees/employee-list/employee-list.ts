@@ -1,16 +1,16 @@
-import { Component, inject, Type } from '@angular/core';
+import { Component, inject, OnInit, Type } from '@angular/core';
 import { EmployeeService } from '../../../services/employee-service';
 import { AsyncPipe, NgComponentOutlet } from '@angular/common';
 import { ConfirmationDialog } from '../../../shared/components/confirmation-dialog/confirmation-dialog';
-
+import { LoaderDirective } from '../../../shared/directives/loader';
 
 @Component({
   selector: 'employee-list',
-  imports: [AsyncPipe, NgComponentOutlet],
+  imports: [AsyncPipe, NgComponentOutlet, LoaderDirective],
   template: `
     <h2>Employee List</h2>
     <table>
-      <thead>
+      <thead *loading="loading">
         <tr>
           <th>Full Name</th>
           <th>Position</th>
@@ -33,13 +33,20 @@ import { ConfirmationDialog } from '../../../shared/components/confirmation-dial
   `,
   styles: ``,
 })
-export class EmployeeList {
+export class EmployeeList implements OnInit {
+
   private readonly employeeService = inject(EmployeeService);
 
   isConfirmationOpen = false;
   confirmDialog: Type<ConfirmationDialog> | null = null;
 
+  loading = true;
+
   employees$ = this.employeeService.getEmployees();
+
+  ngOnInit(): void {
+    this.employees$.subscribe(_ => this.loading = false);
+  }
 
   async showConfirmationDialog() {
     this.confirmDialog = await import(
