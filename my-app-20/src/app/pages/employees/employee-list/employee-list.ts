@@ -3,10 +3,12 @@ import { EmployeeService } from '../../../services/employee-service';
 import { AsyncPipe, NgComponentOutlet } from '@angular/common';
 import { ConfirmationDialog } from '../../../shared/components/confirmation-dialog/confirmation-dialog';
 import { LoaderDirective } from '../../../shared/directives/loader';
+import { RouterLink } from '@angular/router';
+import { EmployeeAvailability } from '../../../shared/directives/employee-availability';
 
 @Component({
   selector: 'employee-list',
-  imports: [AsyncPipe, NgComponentOutlet, LoaderDirective],
+  imports: [AsyncPipe, NgComponentOutlet, LoaderDirective, RouterLink, EmployeeAvailability],
   template: `
     <h2>Employee List</h2>
     <table>
@@ -23,7 +25,8 @@ import { LoaderDirective } from '../../../shared/directives/loader';
           <td>{{ employee.firstName }} {{ employee.lastName }}</td>
           <td>{{ employee.position }}</td>
           <td>
-            <button (click)="showConfirmationDialog()">Delete</button>
+            <span><a [routerLink]="['/employees/details', employee.id]">Go to employee</a></span>
+            <span><button (click)="showConfirmationDialog()">Delete</button></span>
           </td>
         </tr>
         }
@@ -31,10 +34,16 @@ import { LoaderDirective } from '../../../shared/directives/loader';
     </table>
     <ng-container *ngComponentOutlet="confirmDialog"></ng-container>
   `,
-  styles: ``,
+  styles: `
+    span {
+      padding-right: 4px;
+    }
+    a.not-available:hover {
+      color: red;
+    }
+    `,
 })
 export class EmployeeList implements OnInit {
-
   private readonly employeeService = inject(EmployeeService);
 
   isConfirmationOpen = false;
@@ -45,7 +54,7 @@ export class EmployeeList implements OnInit {
   employees$ = this.employeeService.getEmployees();
 
   ngOnInit(): void {
-    this.employees$.subscribe(_ => this.loading = false);
+    this.employees$.subscribe((_) => (this.loading = false));
   }
 
   async showConfirmationDialog() {
