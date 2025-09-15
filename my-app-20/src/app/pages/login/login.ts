@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Auth } from '../../services/auth';
 
 @Component({
@@ -15,26 +20,30 @@ import { Auth } from '../../services/auth';
         <button type="submit" [disabled]="!credentialsForm.valid">Login</button>
       </form>
       @if(!credentialsForm.value.email || !credentialsForm.value.password) {
-        <span class="warning"> Please fill in all the required fields </span>
+      <span class="warning"> Please fill in all the required fields </span>
       }
     </div>
   `,
   styles: ``,
-  providers: [Auth]
+  providers: [Auth],
 })
 export class Login {
-
-  private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(Auth);
 
-  credentialsForm = this.formBuilder.nonNullable.group({
-    email: ['', Validators.required],
-    password: ['', Validators.required],
+  credentialsForm = new FormGroup<CredentialsForm>({
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   submit() {
     if (this.credentialsForm.valid) {
-      this.authService.login(this.credentialsForm.getRawValue()).subscribe();
+      const credentials = this.credentialsForm.value as { email: string; password: string };
+      this.authService.login(credentials).subscribe();
     }
   }
 }
+
+type CredentialsForm = {
+  email: FormControl<string>;
+  password: FormControl<string>;
+};
