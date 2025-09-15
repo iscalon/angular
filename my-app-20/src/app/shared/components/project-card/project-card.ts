@@ -3,20 +3,21 @@ import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/cor
 import { Observable } from 'rxjs';
 import { Project } from '../../../infrastructure/types/project';
 import { ProjectService } from '../../../services/project-service';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-project-card',
   template: `
     @if(project$ | async; as project) {
       <div class="card">
-        <img [src]="project.image" width="5%" height="5%" />
+        <img [ngSrc]="project.image" width="34" height="50" />
         <div class="card-body">
           <h3>{{ project.name }}</h3>
         </div>
       </div>
     }
   `,
-  imports: [AsyncPipe]
+  imports: [AsyncPipe, NgOptimizedImage]
 })
 export class ProjectCardComponent implements OnChanges {
 
