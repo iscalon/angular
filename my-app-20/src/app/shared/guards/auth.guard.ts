@@ -21,7 +21,7 @@ export function hasPermission(permissionName: string): CanActivateFn {
       tap((_) => console.log(`Test de la permission : ${permissionName}`)),
       map(
         (isAuth) =>
-          (isAuth || /* && */ authService.hasPermission(permissionName)) || router.createUrlTree(['/login'])
+          (isAuth && authService.hasPermission(permissionName)) || router.createUrlTree(['/login'])
       )
     );
   };

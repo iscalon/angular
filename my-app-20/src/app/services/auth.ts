@@ -9,17 +9,17 @@ export class Auth {
   isAuthenticated$ = new BehaviorSubject(false);
 
   login(credentials: { email: string; password: string }): Observable<unknown> {
-    console.log(`${credentials.email} - ${credentials.password}`);
+    console.log(`Login ${credentials.email} - ${credentials.password}`);
+    this.isAuthenticated$.next(true);
     return this.http
-      .post('/api/auth/login', credentials)
-      .pipe(tap(() => this.isAuthenticated$.next(true)));
+      .post('/api/auth/login', credentials);
   }
 
   logout(): Observable<unknown> {
     console.log('Logout !');
+    this.isAuthenticated$.next(false);
     return this.http
-      .post('/api/auth/logout', {})
-      .pipe(tap(() => this.isAuthenticated$.next(false)));
+      .post('/api/auth/logout', {});
   }
 
   getAuthenticationToken(): string {

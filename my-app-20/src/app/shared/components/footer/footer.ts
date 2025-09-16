@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { isAuthenticated$ } from '../../../services/auth';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-footer',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <div>
       <h2>HRMS</h2>
@@ -13,6 +14,8 @@ import { CommonModule } from '@angular/common';
         Follow us on social media:
         <a href="https://linkedin.com" target="_blank">Linkedin</a>
         <a href="https://x.com" target="_blank">X (former Twitter)</a>
+        <a routerLink="/employees/list">Employees</a>
+        <a routerLink="/work/projects">Projects</a>
       </div>
       @if (!(isAuthenticated$ | async)) {
         <div class="legal">

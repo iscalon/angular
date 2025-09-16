@@ -24,8 +24,7 @@ import { Auth } from '../../services/auth';
       }
     </div>
   `,
-  styles: ``,
-  providers: [Auth],
+  styles: ``
 })
 export class Login {
   private readonly authService = inject(Auth);
