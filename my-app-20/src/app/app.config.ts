@@ -10,6 +10,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './shared/interceptors/authentication.interceptor';
 import { Limits } from './shared/directives/truncate.directive';
+import { employeePermissionsInterceptor } from './shared/interceptors/employee-permissions.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,7 +25,7 @@ export const appConfig: ApplicationConfig = {
       */
     ),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([authInterceptor]), withFetch()),
+    provideHttpClient(withInterceptors([authInterceptor, employeePermissionsInterceptor]), withFetch()),
     { provide: Limits, useValue: { truncate: 77 } },
   ],
 };

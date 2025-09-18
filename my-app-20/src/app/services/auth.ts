@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
+import { Permission } from '../shared/guards/auth.guard';
 
 @Injectable({ providedIn: 'root' })
 export class Auth {
@@ -26,8 +27,8 @@ export class Auth {
     return 'xxxx-token-yyyyyyy-zzzzzz';
   }
 
-  hasPermission(permission: string): boolean {
-    return 'ListEmployees' === permission;
+  hasPermission(...permissions: Permission[]): Observable<boolean> {
+    return of(permissions.includes('ListEmployees'));
   }
 }
 

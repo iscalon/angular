@@ -1,7 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { map, tap } from 'rxjs/operators';
+import { filter, map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
 import { Auth } from '../../services/auth';
+import { MonoTypeOperatorFunction, pipe } from 'rxjs';
 
 export const authGuard: CanActivateFn = () => {
   const authService = inject(Auth);
@@ -12,17 +13,34 @@ export const authGuard: CanActivateFn = () => {
   );
 };
 
-export function hasPermission(permissionName: string): CanActivateFn {
+export function hasPermission(permission: Permission): CanActivateFn {
   return () => {
     const authService = inject(Auth);
     const router = inject(Router);
 
     return authService.isAuthenticated$.pipe(
-      tap((_) => console.log(`Test de la permission : ${permissionName}`)),
-      map(
-        (isAuth) =>
-          (isAuth && authService.hasPermission(permissionName)) || router.createUrlTree(['/login'])
-      )
+      log(`Test de la permission : ${permission}, est authentifié`),
+      mergeMap((auth) => 
+        authService.hasPermission(permission)
+              .pipe(map((perm) => [auth, perm]))),
+      map(([auth, perm]) => (perm && auth) || router.createUrlTree(['/login']))
     );
   };
+}
+
+function log<T>(message = ''): MonoTypeOperatorFunction<T> {
+  return pipe(tap((item) => console.log(`${message ? message + ' : ' : ''}${item}`)));
+}
+
+export type Permission = 'ListEmployees' | 'CreateEmployee' | 'DeleteEmployee' | 'EditEmployee';
+
+export function hasPermissions<T>(
+  permissions: Permission[],
+  permissionsService = inject(Auth)
+): MonoTypeOperatorFunction<T> {
+  return pipe(
+    withLatestFrom(permissionsService.hasPermission(...permissions)), // Donnne une paire <valeur de l'observable source, dernière valeur émise de l'observable retourné par le service des permissions>
+    filter(([/* on ignore la valeur de l'observable source */, hasPermissions]) => hasPermissions),
+    map(([value]) => value) // Si on a passé le filtre alors on envoie la valeur source telle quelle.
+  );
 }
