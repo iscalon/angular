@@ -20,7 +20,7 @@ export const routes: Routes = [
       return module.routes;
     },
     providers: [EmployeeService],
-    canActivate: [hasPermission('ListEmployees')]
+    canActivate: [hasPermission('EditEmployee')]
   },
   {
     path: 'work',

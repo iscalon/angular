@@ -28,7 +28,7 @@ export class Auth {
   }
 
   hasPermission(...permissions: Permission[]): Observable<boolean> {
-    return of(permissions.includes('ListEmployees'));
+    return of(permissions.includes('EditEmployee'));
   }
 }
 

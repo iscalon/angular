@@ -40,7 +40,10 @@ export function hasPermissions<T>(
 ): MonoTypeOperatorFunction<T> {
   return pipe(
     withLatestFrom(permissionsService.hasPermission(...permissions)), // Donnne une paire <valeur de l'observable source, dernière valeur émise de l'observable retourné par le service des permissions>
-    filter(([/* on ignore la valeur de l'observable source */, hasPermissions]) => hasPermissions),
-    map(([value]) => value) // Si on a passé le filtre alors on envoie la valeur source telle quelle.
+    filter(([/* on ignore la valeur de l'observable source */, isAllowed]) => isAllowed),
+    map(([value]) => {
+      console.log('OK, permission présente');
+      return value;
+    }) // Si on a passé le filtre alors on envoie la valeur source telle quelle.
   );
 }
