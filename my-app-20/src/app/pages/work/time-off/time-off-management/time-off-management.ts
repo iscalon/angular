@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { TimeOffRequest, TimeOffType } from '../../../../infrastructure/time-off-request';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -75,7 +75,12 @@ export class TimeOffManagement {
     },
   ]);
 
-  formControl = new FormControl<TimeOffType | null>(null);
+
+  selectedType = signal<TimeOffType | null>(
+    (localStorage.getItem('selectedType') as TimeOffType) ?? null
+  );
+
+  formControl = new FormControl<TimeOffType | null>(this.selectedType());
 
   resolvedRequests = computed(() => this.requests().filter((r) => r.status !== 'Pending'));
 
@@ -84,7 +89,16 @@ export class TimeOffManagement {
     return this.requests().filter((r) => (type ? r.type === type : true));
   });
 
-  selectedType = signal<TimeOffType | null>(null);
+  constructor() {
+    effect(() => {
+      const selection = this.selectedType();
+      if (!selection) {
+        localStorage.removeItem('selectedType');
+        return;
+      }
+      localStorage.setItem('selectedType', selection);
+    });
+  }
 
   approveRequest(request: TimeOffRequest): void {
     this.requests.update((requests) => {
