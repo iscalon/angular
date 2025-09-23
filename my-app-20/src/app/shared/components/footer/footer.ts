@@ -13,9 +13,10 @@ import { RouterLink } from '@angular/router';
       <div class="links">
         Follow us on social media:
         <a href="https://linkedin.com" target="_blank">Linkedin</a>
-        <a href="https://x.com" target="_blank">X (former Twitter)</a>
-        <a routerLink="/employees/list">Employees</a>
-        <a routerLink="/work/projects">Projects</a>
+        <a href="https://x.com" target="_blank">X (former Twitter)</a>&nbsp;
+        <a routerLink="/employees/list">Employees</a>&nbsp;
+        <a routerLink="/work/projects">Projects</a>&nbsp;
+        <a routerLink="/work/time-off">Time-off requests</a>&nbsp;
       </div>
       @if (!(isAuthenticated$ | async)) {
         <div class="legal">

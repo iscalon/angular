@@ -1,7 +1,17 @@
-import { Component, computed, effect, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Injector,
+  signal
+} from '@angular/core';
 import { TimeOffRequest, TimeOffType } from '../../../../infrastructure/time-off-request';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TimeOffService } from '../../../../services/time-off-service';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-time-off-management',
@@ -55,26 +65,9 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
   styles: ``,
 })
 export class TimeOffManagement {
-  requests = signal<TimeOffRequest[]>([
-    {
-      id: 1,
-      employeeId: 1,
-      startDate: new Date().toISOString(),
-      endDate: new Date().toISOString(),
-      type: 'Vacation',
-      status: 'Pending',
-    },
-    {
-      id: 2,
-      employeeId: 2,
-      startDate: new Date().toISOString(),
-      endDate: new Date().toISOString(),
-      type: 'Sick Leave',
-      status: 'Approved',
-      comment: 'Feeling pretty sick today :(',
-    },
-  ]);
+  readonly timeOffRequestService = inject(TimeOffService);
 
+  requests = toSignal(this.timeOffRequestService.getRequests(), { initialValue: [] });
 
   selectedType = signal<TimeOffType | null>(
     (localStorage.getItem('selectedType') as TimeOffType) ?? null
@@ -89,6 +82,8 @@ export class TimeOffManagement {
     return this.requests().filter((r) => (type ? r.type === type : true));
   });
 
+  private readonly injector = inject(Injector);
+
   constructor() {
     effect(() => {
       const selection = this.selectedType();
@@ -98,38 +93,48 @@ export class TimeOffManagement {
       }
       localStorage.setItem('selectedType', selection);
     });
+
+    this.someMethodForEffect();
+  }
+
+  /**
+   * Si on veut créer un effet en dehors d'un contexte où l'arbre d'injection de dépendances
+   * est existant, alors on peut passer une référence à l'injecteur du composant actuel.
+   */
+  private someMethodForEffect() {
+    effect(
+      () => {
+        console.log(`Time-off résolus : ${JSON.stringify(this.resolvedRequests())}`);
+      },
+      { injector: this.injector }
+    );
   }
 
   approveRequest(request: TimeOffRequest): void {
-    this.requests.update((requests) => {
-      const index = requests.findIndex((r) => r.id === request.id);
-      return requests.map((item, i) =>
-        i === index
-          ? {
-              ...item,
-              status: 'Approved',
-            }
-          : item
-      );
-    });
+    this.requests = toSignal(
+      this.timeOffRequestService
+        .approveRequest(request.id)
+        .pipe(switchMap(() => this.timeOffRequestService.getRequests())),
+      { initialValue: this.requests(), injector: this.injector }
+    );
   }
 
   rejectRequest(request: TimeOffRequest): void {
-    this.requests.update((requests) => {
-      const index = requests.findIndex((r) => r.id === request.id);
-      return requests.map((item, i) =>
-        i === index
-          ? ({
-              ...item,
-              status: 'Rejected',
-            } as TimeOffRequest)
-          : item
-      );
-    });
+    this.requests = toSignal(
+      this.timeOffRequestService
+        .rejectRequest(request.id)
+        .pipe(switchMap(() => this.timeOffRequestService.getRequests())),
+      { initialValue: this.requests(), injector: this.injector }
+    );
   }
 
   deleteRequest(request: TimeOffRequest): void {
-    this.requests.update((requests) => requests.filter((r) => r.id !== request.id));
+    this.requests = toSignal(
+      this.timeOffRequestService
+        .deleteRequest(request.id)
+        .pipe(switchMap(() => this.timeOffRequestService.getRequests())),
+      { initialValue: this.requests(), injector: this.injector }
+    );
   }
 
   onTypeChange(): void {
