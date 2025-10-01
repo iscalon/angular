@@ -1,24 +1,15 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  Injector,
-  signal
-} from '@angular/core';
+import { Component, computed, effect, inject, Injector } from '@angular/core';
 import { TimeOffRequest, TimeOffType } from '../../../../infrastructure/time-off-request';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TimeOffService } from '../../../../services/time-off-service';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-time-off-management',
   imports: [DatePipe, ReactiveFormsModule],
   template: `
     <h2>Time Off Management</h2>
-    <h3>Resolved : {{ resolvedRequests().length }} / {{ requests().length }}</h3>
+    <h3>Resolved : {{ resolvedRequests().length }} / {{ this.timeOffRequestService.requests().length }}</h3>
     <div>
       <select [formControl]="formControl" (change)="onTypeChange()">
         <option [ngValue]="null">All</option>
@@ -67,33 +58,20 @@ import { switchMap } from 'rxjs';
 export class TimeOffManagement {
   readonly timeOffRequestService = inject(TimeOffService);
 
-  requests = toSignal(this.timeOffRequestService.getRequests(), { initialValue: [] });
+  formControl = new FormControl<TimeOffType | null>(this.timeOffRequestService.selectedType());
 
-  selectedType = signal<TimeOffType | null>(
-    (localStorage.getItem('selectedType') as TimeOffType) ?? null
+  resolvedRequests = computed(() =>
+    this.timeOffRequestService.requests().filter((r) => r.status !== 'Pending')
   );
 
-  formControl = new FormControl<TimeOffType | null>(this.selectedType());
-
-  resolvedRequests = computed(() => this.requests().filter((r) => r.status !== 'Pending'));
-
   filteredRequests = computed(() => {
-    const type = this.selectedType();
-    return this.requests().filter((r) => (type ? r.type === type : true));
+    const type = this.timeOffRequestService.selectedType();
+    return this.timeOffRequestService.requests().filter((r) => (type ? r.type === type : true));
   });
 
   private readonly injector = inject(Injector);
 
   constructor() {
-    effect(() => {
-      const selection = this.selectedType();
-      if (!selection) {
-        localStorage.removeItem('selectedType');
-        return;
-      }
-      localStorage.setItem('selectedType', selection);
-    });
-
     this.someMethodForEffect();
   }
 
@@ -111,33 +89,18 @@ export class TimeOffManagement {
   }
 
   approveRequest(request: TimeOffRequest): void {
-    this.requests = toSignal(
-      this.timeOffRequestService
-        .approveRequest(request.id)
-        .pipe(switchMap(() => this.timeOffRequestService.getRequests())),
-      { initialValue: this.requests(), injector: this.injector }
-    );
+    this.timeOffRequestService.approve(request);
   }
 
   rejectRequest(request: TimeOffRequest): void {
-    this.requests = toSignal(
-      this.timeOffRequestService
-        .rejectRequest(request.id)
-        .pipe(switchMap(() => this.timeOffRequestService.getRequests())),
-      { initialValue: this.requests(), injector: this.injector }
-    );
+    this.timeOffRequestService.reject(request);
   }
 
   deleteRequest(request: TimeOffRequest): void {
-    this.requests = toSignal(
-      this.timeOffRequestService
-        .deleteRequest(request.id)
-        .pipe(switchMap(() => this.timeOffRequestService.getRequests())),
-      { initialValue: this.requests(), injector: this.injector }
-    );
+    this.timeOffRequestService.delete(request);
   }
 
   onTypeChange(): void {
-    this.selectedType.set(this.formControl.value);
+    this.timeOffRequestService.selectedType.set(this.formControl.value);
   }
 }
