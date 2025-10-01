@@ -33,12 +33,16 @@ import { Notification } from '../../../infrastructure/types/notification';
 export class Header {
   private readonly notificationService = inject(NotificationService);
 
-  notifications = this.notificationService.notifications;
+  notifications = this.notificationService.allNotifications;
 
   unreadNotifications = this.notificationService.unreadNotifications;
   notificationsOpen = signal(false);
 
   markAsRead(notification: Notification) {
     this.notificationService.markAsRead(notification);
+  }
+
+  constructor() {
+    this.notificationService.connect();
   }
 }
