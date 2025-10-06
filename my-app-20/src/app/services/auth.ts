@@ -9,11 +9,11 @@ export class Auth {
 
   isAuthenticated$ = new BehaviorSubject(false);
 
-  login(credentials: { email: string; password: string }): Observable<unknown> {
+  login(credentials: { email: string; password: string }): Observable<void> {
     console.log(`Login ${credentials.email} - ${credentials.password}`);
     this.isAuthenticated$.next(true);
     return this.http
-      .post('/api/auth/login', credentials);
+      .post<void>('/api/auth/login', credentials);
   }
 
   logout(): Observable<unknown> {
