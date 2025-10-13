@@ -51,14 +51,14 @@ export class TimeOffService {
   }
 
   public getRequests(): Observable<TimeOffRequest[]> {
-    return of(this.allRequests).pipe(delay(1200));
+    return of(this.getAllRequests()).pipe(delay(1200));
   }
 
   public getRequestsByType(type: TimeOffType | null): Observable<TimeOffRequest[]> {
     if (!type) {
-      return of(this.allRequests).pipe(delay(500));
+      return of(this.getAllRequests()).pipe(delay(500));
     }
-    return of(this.allRequests).pipe(
+    return of(this.getAllRequests()).pipe(
       concatMap(from),
       filter((request: TimeOffRequest) => request.type === type),
       toArray(),
@@ -67,13 +67,13 @@ export class TimeOffService {
   }
 
   private deleteRequest(id: number): Observable<number> {
-    this.allRequests = this.allRequests.filter((r) => r.id !== id);
+    this.allRequests = this.getAllRequests().filter((r) => r.id !== id);
     return of(id);
   }
 
   private rejectRequest(id: number): Observable<number> {
-    const index = this.allRequests.findIndex((r) => r.id === id);
-    this.allRequests = this.allRequests.map((item, i) =>
+    const index = this.getAllRequests().findIndex((r) => r.id === id);
+    this.allRequests = this.getAllRequests().map((item, i) =>
       i === index
         ? ({
             ...item,
@@ -85,8 +85,8 @@ export class TimeOffService {
   }
 
   private approveRequest(id: number): Observable<number> {
-    const index = this.allRequests.findIndex((r) => r.id === id);
-    this.allRequests = this.allRequests.map((item, i) =>
+    const index = this.getAllRequests().findIndex((r) => r.id === id);
+    this.allRequests = this.getAllRequests().map((item, i) =>
       i === index
         ? {
             ...item,
@@ -129,5 +129,13 @@ export class TimeOffService {
 
   delete(request: TimeOffRequest) {
     this.deleteAction$.next(request);
+  }
+
+  /**
+   * Méthode utile pour les tests
+   * @returns l'ensemble des time-off requests
+   */
+  getAllRequests() : TimeOffRequest[] {
+    return this.allRequests;
   }
 }
